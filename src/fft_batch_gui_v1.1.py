@@ -49,7 +49,8 @@ def read_sts(path):
 
 def generate_plot(data, sample_rate, time_range, freq_range, cross_time, cross_time_window,
                   filter_freq, filter_freq_window, filename="", colorbar_max=None,
-                  remove_dc=True, detrend=False, window_type="无", resample_factor=10):
+                  remove_dc=True, detrend=False, window_type="无", resample_factor=10,
+                  min_freq_for_main=10):
     """
     生成FFT频谱分析图像，包含三个子图：
     1. 上方：指定时间窗口的平均频谱图
@@ -92,17 +93,16 @@ def generate_plot(data, sample_rate, time_range, freq_range, cross_time, cross_t
         from scipy.signal import detrend as scipy_detrend
         data = scipy_detrend(data)
 
-    # 加窗：应用窗函数减少频谱泄漏
-    if window_type != "无":
-        if window_type == "汉宁窗":
-            window = np.hanning(len(data))
-        elif window_type == "汉明窗":
-            window = np.hamming(len(data))
-        elif window_type == "布莱克曼窗":
-            window = np.blackman(len(data))
-        data = data * window
+    # 加窗校正因子：补偿窗函数造成的能量损失
+    window_correction = {
+        "无": 1.0,
+        "汉宁窗": 2.0,           # 1/0.5
+        "汉明窗": 1.0 / 0.54,    # ≈1.85
+        "布莱克曼窗": 1.0 / 0.42  # ≈2.38
+    }
+    correction_factor = window_correction.get(window_type, 1.0)
 
-    # 计算FFT频谱
+    # 计算FFT频谱（整体频谱，不加窗）
     n = len(data)
     fft_result = np.fft.fft(data)
     fft_magnitude = np.abs(fft_result)[:n // 2] * 2 / n
@@ -119,13 +119,9 @@ def generate_plot(data, sample_rate, time_range, freq_range, cross_time, cross_t
     for i in range(num_windows):
         start = i * overlap
         end = start + window_size
-        window_data = data[start:end]
-        # 对每个窗口进行相同的预处理
-        if remove_dc:
-            window_data = window_data - np.mean(window_data)
-        if detrend:
-            from scipy.signal import detrend as scipy_detrend
-            window_data = scipy_detrend(window_data)
+        window_data = data[start:end].copy()  # 使用已预处理的data，不再重复去直流/去趋势
+        
+        # 仅对每个窗口加窗（用于STFT）
         if window_type != "无":
             if window_type == "汉宁窗":
                 w = np.hanning(len(window_data))
@@ -134,9 +130,10 @@ def generate_plot(data, sample_rate, time_range, freq_range, cross_time, cross_t
             elif window_type == "布莱克曼窗":
                 w = np.blackman(len(window_data))
             window_data = window_data * w
-        # 计算每个窗口的FFT
+        
+        # 计算每个窗口的FFT，并乘以校正因子补偿窗函数能量损失
         window_fft = np.fft.fft(window_data)
-        window_mag = np.abs(window_fft)[:window_size // 2] * 2 / window_size
+        window_mag = np.abs(window_fft)[:window_size // 2] * 2 / window_size * correction_factor
         waterfall_data.append(window_mag)
         times.append(time_range[0] + start / sample_rate)
 
@@ -161,8 +158,8 @@ def generate_plot(data, sample_rate, time_range, freq_range, cross_time, cross_t
     else:
         cross_spectrum = waterfall_data[0]
 
-    # 计算主频：在选取的频率范围和时间窗口内，排除10Hz以下的低频干扰
-    min_main_freq = max(10, freq_range[0]) if freq_range is not None else 10
+    # 计算主频：在选取的频率范围和时间窗口内，排除指定频率以下的低频干扰
+    min_main_freq = max(min_freq_for_main, freq_range[0]) if freq_range is not None else min_freq_for_main
     valid_mask = waterfall_freq >= min_main_freq
     valid_spectrum = cross_spectrum.copy()
     valid_spectrum[~valid_mask] = 0
@@ -185,12 +182,6 @@ def generate_plot(data, sample_rate, time_range, freq_range, cross_time, cross_t
     filtered_data = sosfiltfilt(sos, data)
     filtered_data = np.nan_to_num(filtered_data, nan=0.0, posinf=0.0, neginf=0.0)
     time_array = np.linspace(time_range[0], time_range[1], len(filtered_data))
-
-    # 单位转换：从g转换为m/s²（1g = 9.81 m/s²）
-    g_to_mps2 = 9.81
-    cross_spectrum = cross_spectrum * g_to_mps2
-    filtered_data = filtered_data * g_to_mps2
-    waterfall_data = waterfall_data * g_to_mps2
 
     # 创建图像布局：使用GridSpec精确控制子图位置和大小
     fig = plt.figure(figsize=(16, 10))
@@ -232,10 +223,14 @@ def generate_plot(data, sample_rate, time_range, freq_range, cross_time, cross_t
                    label=f'主频: {main_freq:.2f} Hz')
     ax_top.set_title(f"{filename} - Avg at {cross_time}s±{time_window}s", fontsize=16)
     ax_top.set_ylabel("幅值", fontsize=14)
+    # 频域图横坐标从用户设置的freq_range[0]开始显示
     ax_top.set_xlim(freq_range[0], freq_range[1])
-    # 计算自适应坐标范围，添加5%边距
-    spec_min = np.min(cross_spectrum)
-    spec_max = np.max(cross_spectrum)
+    # 计算纵坐标自适应范围：仅参考min_freq_for_main之后的数据，避免低频噪声影响
+    plot_freq_start = max(min_freq_for_main, freq_range[0]) if freq_range is not None else min_freq_for_main
+    visible_mask = (waterfall_freq >= plot_freq_start) & (waterfall_freq <= freq_range[1])
+    visible_spectrum = cross_spectrum[visible_mask]
+    spec_min = np.min(visible_spectrum)
+    spec_max = np.max(visible_spectrum)
     spec_range = spec_max - spec_min
     if spec_range == 0 or np.isnan(spec_range):
         spec_margin = 1.0
@@ -324,11 +319,12 @@ class MainWindow(QMainWindow):
         self.file_list = []         # 文件列表
         self.colorbar_max = None    # 色条最大值，None表示自适应
         self.window_type = "无"     # 加窗类型
+        self.min_freq_for_main = 10  # 主频搜索最小频率，默认10Hz
 
         # 创建菜单栏
         menubar = self.menuBar()
         
-        # 设置菜单：包含清除文件夹、修改色条范围、加窗选项
+        # 设置菜单：包含清除文件夹、修改色条范围、加窗选项、主频搜索频率
         settings_menu = menubar.addMenu("设置")
         clear_folder_action = QAction("清除文件夹选择", self)
         clear_folder_action.triggered.connect(self.clear_folder)
@@ -341,6 +337,10 @@ class MainWindow(QMainWindow):
         self.window_action = QAction("加窗（无）", self)
         self.window_action.triggered.connect(self.set_window_type)
         settings_menu.addAction(self.window_action)
+        
+        self.min_freq_action = QAction("主频搜索起始频率（10Hz）", self)
+        self.min_freq_action.triggered.connect(self.set_min_freq_for_main)
+        settings_menu.addAction(self.min_freq_action)
         
         # 帮助菜单：包含关于和使用说明
         help_menu = menubar.addMenu("帮助")
@@ -654,6 +654,54 @@ class MainWindow(QMainWindow):
         self.window_type = "无"
         self.window_action.setText("加窗（无）")
 
+    def set_min_freq_for_main(self):
+        """设置主频搜索起始频率，并自动更新图像"""
+        from PyQt5.QtWidgets import QInputDialog
+        text, ok = QInputDialog.getText(self, "设置主频搜索起始频率", 
+                                         "请输入最小频率（Hz，用于排除低频噪声）：",
+                                         text=str(self.min_freq_for_main))
+        if ok:
+            try:
+                val = float(text)
+                if val < 0:
+                    QMessageBox.warning(self, "警告", "频率不能为负数！")
+                    return
+                self.min_freq_for_main = val
+                self.min_freq_action.setText(f"主频搜索起始频率（{val:g}Hz）")
+                # 自动更新图像
+                if self.sts_path and self.data is not None:
+                    try:
+                        time_range = (float(self.time_min.text()), float(self.time_max.text()))
+                        freq_range = (float(self.freq_min.text()), float(self.freq_max.text()))
+                        sample_rate = int(self.sample_rate.text())
+                        cross_time = float(self.cross_time.text())
+                        cross_time_window = float(self.cross_time_window.text())
+                        filter_freq = float(self.filter_freq.text())
+                        filter_freq_window = float(self.filter_freq_window.text())
+                        resample_factor = int(self.resample_factor.text())
+
+                        fig = generate_plot(self.data, sample_rate, time_range, freq_range,
+                                           cross_time, cross_time_window,
+                                           filter_freq, filter_freq_window,
+                                           filename=os.path.basename(self.sts_path),
+                                           colorbar_max=self.colorbar_max,
+                                           remove_dc=self.remove_dc.isChecked(),
+                                           detrend=self.detrend.isChecked(),
+                                           window_type=self.window_type,
+                                           resample_factor=resample_factor,
+                                           min_freq_for_main=self.min_freq_for_main)
+
+                        for i in reversed(range(self.plot_layout.count())):
+                            self.plot_layout.itemAt(i).widget().deleteLater()
+
+                        from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
+                        self.canvas = FigureCanvasQTAgg(fig)
+                        self.plot_layout.addWidget(self.canvas)
+                    except Exception as e:
+                        QMessageBox.critical(self, "错误", f"更新图像失败：{str(e)}")
+            except ValueError:
+                QMessageBox.warning(self, "警告", "请输入有效的数字！")
+
     def set_window_type(self):
         """设置加窗类型，并自动更新图像"""
         from PyQt5.QtWidgets import QInputDialog
@@ -732,7 +780,8 @@ class MainWindow(QMainWindow):
                                        remove_dc=self.remove_dc.isChecked(),
                                        detrend=self.detrend.isChecked(),
                                        window_type=self.window_type,
-                                       resample_factor=int(self.resample_factor.text()))
+                                       resample_factor=int(self.resample_factor.text()),
+                                       min_freq_for_main=self.min_freq_for_main)
 
                     for i in reversed(range(self.plot_layout.count())):
                         self.plot_layout.itemAt(i).widget().deleteLater()
@@ -764,10 +813,11 @@ class MainWindow(QMainWindow):
                                    filter_freq, filter_freq_window,
                                    filename=os.path.basename(file_path),
                                    colorbar_max=self.colorbar_max,
-                                       remove_dc=self.remove_dc.isChecked(),
-                                       detrend=self.detrend.isChecked(),
-                                       window_type=self.window_type,
-                                       resample_factor=int(self.resample_factor.text()))
+                                   remove_dc=self.remove_dc.isChecked(),
+                                   detrend=self.detrend.isChecked(),
+                                   window_type=self.window_type,
+                                   resample_factor=int(self.resample_factor.text()),
+                                   min_freq_for_main=self.min_freq_for_main)
 
                 for i in reversed(range(self.plot_layout.count())):
                     self.plot_layout.itemAt(i).widget().deleteLater()
@@ -931,10 +981,16 @@ class MainWindow(QMainWindow):
         msg.setWindowTitle("关于")
         msg.setTextFormat(Qt.RichText)
         msg.setText(
-            "振动加速度数据分析工具 v1.0<br><br>"
+            "振动加速度数据分析工具 v1.1<br><br>"
             "作者: StupidMoonlight<br>"
             "GitHub: <a href='https://github.com/StupidMoonlight'>https://github.com/StupidMoonlight</a><br><br>"
-            "用于振动加速度信号的FFT频谱分析和可视化。")
+            "用于振动加速度信号的FFT频谱分析和可视化。<br><br>"
+            "<b>v1.1 更新内容：</b><br>"
+            "- 修复STFT重复预处理导致幅值错误的问题<br>"
+            "- 添加加窗校正因子，确保加窗后幅值准确<br>"
+            "- 添加主频搜索起始频率设置，排除低频噪声干扰<br>"
+            "- 移除错误的单位转换（数据默认为加速度值，无需转换）<br>"
+            "- 优化频域图纵坐标自适应逻辑")
         msg.setTextInteractionFlags(Qt.TextBrowserInteraction)
         msg.exec_()
 
@@ -984,6 +1040,7 @@ class MainWindow(QMainWindow):
             "<li><b>清除文件夹选择</b>：清空已选择的文件夹和文件列表</li>"
             "<li><b>修改瀑布图色条范围</b>：设置色条的最大值（默认自适应）</li>"
             "<li><b>加窗</b>：选择窗函数类型（无/汉宁窗/汉明窗/布莱克曼窗）</li>"
+            "<li><b>主频搜索起始频率</b>：设置主频计算的最低频率阈值，排除低频噪声干扰（默认10Hz）。纵坐标自适应范围会参考该值之后的数据，避免低频噪声导致主频信号被压缩</li>"
             "</ul>"
             "<h3>【图像说明】</h3>"
             "<ul>"
