@@ -26,16 +26,114 @@ matplotlib.rcParams['font.sans-serif'] = ['SimHei', 'Microsoft YaHei', 'DejaVu S
 matplotlib.rcParams['axes.unicode_minus'] = False
 matplotlib.rcParams['font.family'] = 'sans-serif'
 
-# 自定义色条颜色映射：黑-绿-青-蓝-紫-红-黄-白
+# 自定义色条颜色映射：从img.png提取的颜色（黑-绿-青-蓝-紫-红-黄-白）
 custom_colors = [
-    (0.0, 0.0, 0.0),   # 黑
-    (0.0, 1.0, 0.0),   # 绿
-    (0.0, 1.0, 1.0),   # 青
-    (0.0, 0.0, 1.0),   # 蓝
-    (0.5, 0.0, 0.5),   # 紫
-    (1.0, 0.0, 0.0),   # 红
-    (1.0, 1.0, 0.0),   # 黄
-    (1.0, 1.0, 1.0),   # 白
+    (0.0000, 0.0000, 0.0000),
+    (0.0000, 0.0353, 0.0000),
+    (0.0000, 0.0667, 0.0000),
+    (0.0039, 0.0784, 0.0000),
+    (0.0118, 0.1176, 0.0000),
+    (0.0000, 0.1490, 0.0000),
+    (0.0078, 0.1725, 0.0118),
+    (0.0039, 0.2000, 0.0000),
+    (0.0000, 0.2275, 0.0000),
+    (0.0039, 0.2510, 0.0118),
+    (0.0000, 0.2863, 0.0000),
+    (0.0000, 0.3137, 0.0000),
+    (0.0039, 0.3373, 0.0078),
+    (0.0000, 0.3647, 0.0549),
+    (0.0039, 0.3804, 0.1020),
+    (0.0118, 0.4078, 0.1529),
+    (0.0078, 0.4314, 0.2078),
+    (0.0000, 0.4588, 0.2196),
+    (0.0000, 0.4863, 0.2745),
+    (0.0000, 0.5098, 0.3216),
+    (0.0000, 0.5373, 0.3765),
+    (0.0000, 0.5490, 0.4235),
+    (0.0000, 0.5765, 0.4667),
+    (0.0039, 0.6000, 0.4941),
+    (0.0000, 0.6235, 0.5490),
+    (0.0000, 0.6549, 0.5961),
+    (0.0039, 0.6431, 0.6275),
+    (0.0000, 0.6431, 0.6353),
+    (0.0039, 0.6431, 0.6353),
+    (0.0000, 0.5882, 0.6353),
+    (0.0039, 0.5333, 0.6353),
+    (0.0000, 0.4784, 0.6392),
+    (0.0000, 0.4235, 0.6431),
+    (0.0078, 0.3529, 0.6353),
+    (0.0039, 0.3020, 0.6431),
+    (0.0039, 0.2510, 0.6392),
+    (0.0039, 0.2000, 0.6314),
+    (0.0078, 0.1451, 0.6314),
+    (0.0431, 0.1412, 0.6471),
+    (0.0824, 0.1451, 0.6588),
+    (0.1294, 0.1451, 0.6784),
+    (0.1725, 0.1451, 0.6902),
+    (0.2157, 0.1451, 0.7059),
+    (0.2588, 0.1490, 0.7216),
+    (0.3059, 0.1490, 0.7373),
+    (0.3529, 0.1451, 0.7490),
+    (0.3961, 0.1490, 0.7686),
+    (0.4431, 0.1412, 0.7804),
+    (0.4902, 0.1412, 0.7961),
+    (0.5216, 0.1451, 0.8039),
+    (0.5569, 0.1490, 0.8157),
+    (0.6078, 0.1490, 0.8353),
+    (0.6745, 0.1373, 0.8471),
+    (0.7098, 0.1451, 0.8588),
+    (0.7569, 0.1451, 0.8549),
+    (0.7686, 0.1412, 0.8196),
+    (0.7804, 0.1412, 0.7529),
+    (0.7961, 0.1412, 0.6941),
+    (0.8000, 0.1490, 0.6588),
+    (0.8235, 0.1490, 0.5804),
+    (0.8275, 0.1451, 0.5490),
+    (0.8431, 0.1490, 0.5098),
+    (0.8627, 0.1490, 0.4353),
+    (0.8745, 0.1490, 0.3961),
+    (0.8941, 0.1490, 0.3373),
+    (0.9098, 0.1490, 0.2667),
+    (0.9255, 0.1451, 0.2471),
+    (0.9490, 0.1490, 0.1804),
+    (0.9569, 0.1412, 0.1216),
+    (0.9725, 0.1412, 0.1176),
+    (0.9882, 0.1451, 0.0431),
+    (0.9961, 0.1569, 0.0000),
+    (0.9961, 0.2039, 0.0000),
+    (0.9922, 0.2510, 0.0000),
+    (0.9961, 0.2980, 0.0078),
+    (0.9961, 0.3412, 0.0000),
+    (1.0000, 0.3922, 0.0000),
+    (0.9961, 0.4431, 0.0078),
+    (0.9922, 0.5020, 0.0000),
+    (0.9961, 0.5490, 0.0039),
+    (0.9961, 0.5922, 0.0157),
+    (0.9961, 0.6471, 0.0000),
+    (0.9922, 0.6941, 0.0000),
+    (0.9843, 0.7412, 0.0000),
+    (0.9843, 0.8000, 0.0000),
+    (0.9922, 0.8471, 0.0000),
+    (0.9882, 0.8863, 0.0000),
+    (0.9922, 0.9451, 0.0000),
+    (1.0000, 0.9961, 0.0000),
+    (1.0000, 0.9961, 0.0588),
+    (1.0000, 1.0000, 0.1137),
+    (0.9882, 1.0000, 0.1569),
+    (0.9804, 0.9961, 0.2392),
+    (0.9882, 0.9961, 0.2941),
+    (1.0000, 0.9961, 0.3333),
+    (1.0000, 0.9961, 0.4078),
+    (0.9922, 1.0000, 0.4431),
+    (1.0000, 1.0000, 0.5059),
+    (1.0000, 0.9882, 0.5725),
+    (0.9961, 1.0000, 0.6118),
+    (1.0000, 0.9961, 0.6784),
+    (1.0000, 0.9922, 0.7490),
+    (1.0000, 1.0000, 0.7922),
+    (1.0000, 0.9922, 0.8706),
+    (0.9961, 0.9961, 0.9255),
+    (0.9922, 0.9961, 0.9686),
 ]
 custom_cmap = LinearSegmentedColormap.from_list('custom', custom_colors, N=256)
 
@@ -49,7 +147,7 @@ def read_sts(path):
 
 def generate_plot(data, sample_rate, time_range, freq_range, cross_time, cross_time_window,
                   filter_freq, filter_freq_window, filename="", colorbar_max=None,
-                  remove_dc=True, detrend=False, window_type="无", resample_factor=10,
+                  colorbar_min=None, remove_dc=True, detrend=False, window_type="无", resample_factor=10,
                   min_freq_for_main=10):
     """
     生成FFT频谱分析图像，包含三个子图：
@@ -110,14 +208,15 @@ def generate_plot(data, sample_rate, time_range, freq_range, cross_time, cross_t
 
     # 计算瀑布图数据：使用短时傅里叶变换(STFT)
     window_size = int(sample_rate * 0.5)  # 窗口大小：0.5秒
-    overlap = window_size // 2  # 重叠率：50%
-    num_windows = (len(data) - window_size) // overlap + 1
+    analysis_interval = int(sample_rate * 0.2)  # 分析间隔：0.2秒
+    overlap = window_size - analysis_interval  # 重叠量：0.3秒
+    num_windows = (len(data) - window_size) // analysis_interval + 1
 
     waterfall_data = []
     times = []
 
     for i in range(num_windows):
-        start = i * overlap
+        start = i * analysis_interval
         end = start + window_size
         window_data = data[start:end].copy()  # 使用已预处理的data，不再重复去直流/去趋势
         
@@ -247,11 +346,14 @@ def generate_plot(data, sample_rate, time_range, freq_range, cross_time, cross_t
 
     # 绘制瀑布图：使用对数刻度增强对比度
     waterfall_log = np.log10(waterfall_data + 1e-10)
-    log_min = max(np.min(waterfall_log), 0)
     if colorbar_max is not None:
         log_max = np.log10(colorbar_max)
     else:
         log_max = np.max(waterfall_log)
+    if colorbar_min is not None:
+        log_min = np.log10(colorbar_min)
+    else:
+        log_min = np.min(waterfall_log)
     im = ax_bottom.imshow(waterfall_log, aspect='auto', origin='lower',
                           extent=[waterfall_freq[0], waterfall_freq[-1], times[0], times[-1]],
                           cmap=custom_cmap, interpolation='bilinear',
@@ -285,7 +387,11 @@ def generate_plot(data, sample_rate, time_range, freq_range, cross_time, cross_t
         else:
             return f'{real_val:.2f}'
 
-    cbar.locator = ticker.MaxNLocator(nbins=10)
+    # 色条刻度设置：增加刻度数量，确保最大值和最小值都有刻度
+    # 生成包含最小值和最大值的等间距刻度
+    num_ticks = 15  # 刻度数量
+    tick_positions = np.linspace(log_min, log_max, num_ticks)
+    cbar.set_ticks(tick_positions)
     cbar.formatter = ticker.FuncFormatter(log_to_real)
     cbar.update_ticks()
 
@@ -318,25 +424,26 @@ class MainWindow(QMainWindow):
         self.folder_path = ""       # 当前选择的文件夹路径
         self.file_list = []         # 文件列表
         self.colorbar_max = None    # 色条最大值，None表示自适应
-        self.window_type = "无"     # 加窗类型
+        self.colorbar_min = None    # 色条最小值，None表示自适应
+        self.window_type = "汉宁窗"     # 加窗类型
         self.min_freq_for_main = 10  # 主频搜索最小频率，默认10Hz
 
         # 创建菜单栏
         menubar = self.menuBar()
         
-        # 设置菜单：包含清除文件夹、修改色条范围、加窗选项、主频搜索频率
+        # 设置菜单：包含清除文件夹、修改色条范围、主频搜索频率
         settings_menu = menubar.addMenu("设置")
         clear_folder_action = QAction("清除文件夹选择", self)
         clear_folder_action.triggered.connect(self.clear_folder)
         settings_menu.addAction(clear_folder_action)
         
-        self.colorbar_action = QAction("修改瀑布图色条范围（默认）", self)
+        self.colorbar_action = QAction("修改瀑布图色条上限（默认）", self)
         self.colorbar_action.triggered.connect(self.set_colorbar_max)
         settings_menu.addAction(self.colorbar_action)
         
-        self.window_action = QAction("加窗（无）", self)
-        self.window_action.triggered.connect(self.set_window_type)
-        settings_menu.addAction(self.window_action)
+        self.colorbar_min_action = QAction("修改瀑布图色条最小值（默认）", self)
+        self.colorbar_min_action.triggered.connect(self.set_colorbar_min)
+        settings_menu.addAction(self.colorbar_min_action)
         
         self.min_freq_action = QAction("主频搜索起始频率（10Hz）", self)
         self.min_freq_action.triggered.connect(self.set_min_freq_for_main)
@@ -498,6 +605,19 @@ class MainWindow(QMainWindow):
         resample_layout.addWidget(self.resample_factor)
         preprocess_layout.addLayout(resample_layout)
 
+        # 窗函数选择
+        window_layout = QVBoxLayout()
+        window_label = QLabel("窗函数：")
+        window_label.setFont(label_font)
+        window_layout.addWidget(window_label)
+        self.window_combo = QComboBox()
+        self.window_combo.setFont(edit_font)
+        self.window_combo.addItems(["无", "汉宁窗", "汉明窗", "布莱克曼窗"])
+        self.window_combo.setCurrentText("汉宁窗")
+        self.window_combo.currentTextChanged.connect(self.on_window_changed)
+        window_layout.addWidget(self.window_combo)
+        preprocess_layout.addLayout(window_layout)
+
         preprocess_group.setLayout(preprocess_layout)
         control_layout.addWidget(preprocess_group)
 
@@ -650,9 +770,11 @@ class MainWindow(QMainWindow):
         self.folder_label.setText("未选择文件夹")
         self.file_list_widget.clear()
         self.colorbar_max = None
-        self.colorbar_action.setText("修改瀑布图色条范围（默认）")
-        self.window_type = "无"
-        self.window_action.setText("加窗（无）")
+        self.colorbar_min = None
+        self.colorbar_action.setText("修改瀑布图色条上限（默认）")
+        self.colorbar_min_action.setText("修改瀑布图色条最小值（默认）")
+        self.window_type = "汉宁窗"
+        self.window_combo.setCurrentText("汉宁窗")
 
     def set_min_freq_for_main(self):
         """设置主频搜索起始频率，并自动更新图像"""
@@ -685,6 +807,7 @@ class MainWindow(QMainWindow):
                                            filter_freq, filter_freq_window,
                                            filename=os.path.basename(self.sts_path),
                                            colorbar_max=self.colorbar_max,
+                                           colorbar_min=self.colorbar_min,
                                            remove_dc=self.remove_dc.isChecked(),
                                            detrend=self.detrend.isChecked(),
                                            window_type=self.window_type,
@@ -702,45 +825,9 @@ class MainWindow(QMainWindow):
             except ValueError:
                 QMessageBox.warning(self, "警告", "请输入有效的数字！")
 
-    def set_window_type(self):
-        """设置加窗类型，并自动更新图像"""
-        from PyQt5.QtWidgets import QInputDialog
-        items = ["无", "汉宁窗", "汉明窗", "布莱克曼窗"]
-        current_idx = items.index(self.window_type) if self.window_type in items else 0
-        item, ok = QInputDialog.getItem(self, "选择加窗类型", "请选择窗函数：", items, current_idx, False)
-        if ok:
-            self.window_type = item
-            self.window_action.setText(f"加窗（{item}）")
-            # 自动更新图像
-            if self.sts_path and self.data is not None:
-                try:
-                    time_range = (float(self.time_min.text()), float(self.time_max.text()))
-                    freq_range = (float(self.freq_min.text()), float(self.freq_max.text()))
-                    sample_rate = int(self.sample_rate.text())
-                    cross_time = float(self.cross_time.text())
-                    cross_time_window = float(self.cross_time_window.text())
-                    filter_freq = float(self.filter_freq.text())
-                    filter_freq_window = float(self.filter_freq_window.text())
-                    resample_factor = int(self.resample_factor.text())
-
-                    fig = generate_plot(self.data, sample_rate, time_range, freq_range,
-                                       cross_time, cross_time_window,
-                                       filter_freq, filter_freq_window,
-                                       filename=os.path.basename(self.sts_path),
-                                       colorbar_max=self.colorbar_max,
-                                       remove_dc=self.remove_dc.isChecked(),
-                                       detrend=self.detrend.isChecked(),
-                                       window_type=self.window_type,
-                                       resample_factor=resample_factor)
-
-                    for i in reversed(range(self.plot_layout.count())):
-                        self.plot_layout.itemAt(i).widget().deleteLater()
-
-                    from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
-                    self.canvas = FigureCanvasQTAgg(fig)
-                    self.plot_layout.addWidget(self.canvas)
-                except Exception as e:
-                    QMessageBox.critical(self, "错误", f"更新图像失败：{str(e)}")
+    def on_window_changed(self, text):
+        """窗函数选择改变时记录选择，不自动更新图像"""
+        self.window_type = text
 
     def set_colorbar_max(self):
         from PyQt5.QtWidgets import QInputDialog
@@ -748,16 +835,16 @@ class MainWindow(QMainWindow):
             default_val = ""
         else:
             default_val = str(self.colorbar_max)
-        text, ok = QInputDialog.getText(self, "设置色条范围", "请输入色条最大值（留空表示自适应）：", text=default_val)
+        text, ok = QInputDialog.getText(self, "设置色条最大值", "请输入色条最大值（留空表示自适应）：", text=default_val)
         if ok:
             if text.strip() == "":
                 self.colorbar_max = None
-                self.colorbar_action.setText("修改瀑布图色条范围（默认）")
+                self.colorbar_action.setText("修改瀑布图色条上限（默认）")
             else:
                 try:
                     val = float(text)
                     self.colorbar_max = val
-                    self.colorbar_action.setText(f"修改瀑布图色条范围（{val:g}）")
+                    self.colorbar_action.setText(f"修改瀑布图色条上限（{val:g}）")
                 except ValueError:
                     QMessageBox.warning(self, "警告", "请输入有效的数字！")
                     return
@@ -777,6 +864,58 @@ class MainWindow(QMainWindow):
                                        filter_freq, filter_freq_window,
                                        filename=os.path.basename(self.sts_path),
                                        colorbar_max=self.colorbar_max,
+                                       colorbar_min=self.colorbar_min,
+                                       remove_dc=self.remove_dc.isChecked(),
+                                       detrend=self.detrend.isChecked(),
+                                       window_type=self.window_type,
+                                       resample_factor=int(self.resample_factor.text()),
+                                       min_freq_for_main=self.min_freq_for_main)
+
+                    for i in reversed(range(self.plot_layout.count())):
+                        self.plot_layout.itemAt(i).widget().deleteLater()
+
+                    from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
+                    self.canvas = FigureCanvasQTAgg(fig)
+                    self.plot_layout.addWidget(self.canvas)
+                except Exception as e:
+                    QMessageBox.critical(self, "错误", f"更新图像失败：{str(e)}")
+
+    def set_colorbar_min(self):
+        from PyQt5.QtWidgets import QInputDialog
+        if self.colorbar_min is None:
+            default_val = ""
+        else:
+            default_val = str(self.colorbar_min)
+        text, ok = QInputDialog.getText(self, "设置色条最小值", "请输入色条最小值（留空表示自适应）：", text=default_val)
+        if ok:
+            if text.strip() == "":
+                self.colorbar_min = None
+                self.colorbar_min_action.setText("修改瀑布图色条最小值（默认）")
+            else:
+                try:
+                    val = float(text)
+                    self.colorbar_min = val
+                    self.colorbar_min_action.setText(f"修改瀑布图色条最小值（{val:g}）")
+                except ValueError:
+                    QMessageBox.warning(self, "警告", "请输入有效的数字！")
+                    return
+            # 自动更新图像
+            if self.sts_path and self.data is not None:
+                try:
+                    time_range = (float(self.time_min.text()), float(self.time_max.text()))
+                    freq_range = (float(self.freq_min.text()), float(self.freq_max.text()))
+                    sample_rate = int(self.sample_rate.text())
+                    cross_time = float(self.cross_time.text())
+                    cross_time_window = float(self.cross_time_window.text())
+                    filter_freq = float(self.filter_freq.text())
+                    filter_freq_window = float(self.filter_freq_window.text())
+
+                    fig = generate_plot(self.data, sample_rate, time_range, freq_range,
+                                       cross_time, cross_time_window,
+                                       filter_freq, filter_freq_window,
+                                       filename=os.path.basename(self.sts_path),
+                                       colorbar_max=self.colorbar_max,
+                                       colorbar_min=self.colorbar_min,
                                        remove_dc=self.remove_dc.isChecked(),
                                        detrend=self.detrend.isChecked(),
                                        window_type=self.window_type,
@@ -813,6 +952,7 @@ class MainWindow(QMainWindow):
                                    filter_freq, filter_freq_window,
                                    filename=os.path.basename(file_path),
                                    colorbar_max=self.colorbar_max,
+                                   colorbar_min=self.colorbar_min,
                                    remove_dc=self.remove_dc.isChecked(),
                                    detrend=self.detrend.isChecked(),
                                    window_type=self.window_type,
@@ -865,10 +1005,12 @@ class MainWindow(QMainWindow):
                                        filter_freq, filter_freq_window,
                                        filename=os.path.basename(self.sts_path),
                                        colorbar_max=self.colorbar_max,
+                                       colorbar_min=self.colorbar_min,
                                        remove_dc=self.remove_dc.isChecked(),
                                        detrend=self.detrend.isChecked(),
                                        window_type=self.window_type,
-                                       resample_factor=int(self.resample_factor.text()))
+                                       resample_factor=int(self.resample_factor.text()),
+                                       min_freq_for_main=self.min_freq_for_main)
 
             # 清除旧图像
             for i in reversed(range(self.plot_layout.count())):
@@ -944,10 +1086,12 @@ class MainWindow(QMainWindow):
                                    filter_freq, filter_freq_window,
                                    filename=os.path.basename(file_path),
                                    colorbar_max=self.colorbar_max,
+                                   colorbar_min=self.colorbar_min,
                                    remove_dc=self.remove_dc.isChecked(),
                                    detrend=self.detrend.isChecked(),
                                    window_type=self.window_type,
-                                   resample_factor=resample_factor)
+                                   resample_factor=resample_factor,
+                                   min_freq_for_main=self.min_freq_for_main)
 
                 # 使用原文件名（去掉.sts后缀）作为图像文件名
                 base_name = os.path.splitext(os.path.basename(file_path))[0]
@@ -981,14 +1125,22 @@ class MainWindow(QMainWindow):
         msg.setWindowTitle("关于")
         msg.setTextFormat(Qt.RichText)
         msg.setText(
-            "振动加速度数据分析工具 v1.1<br><br>"
+            "振动加速度数据分析工具 v1.2<br><br>"
             "作者: StupidMoonlight<br>"
             "GitHub: <a href='https://github.com/StupidMoonlight'>https://github.com/StupidMoonlight</a><br><br>"
             "用于振动加速度信号的FFT频谱分析和可视化。<br><br>"
+            "<b>v1.2 更新内容：</b><br>"
+            "- 将窗函数选择从设置菜单移至前处理设置界面，操作更直观<br>"
+            "- 窗函数默认值改为汉宁窗<br>"
+            "- 优化STFT分析：分析间隔改为0.2秒，提高时间分辨率<br>"
+            "- 增加色条刻度数量（15个），确保最大值和最小值都有刻度标注<br>"
+            "- 修复色条最小值自适应逻辑，默认真正自适应数据范围<br>"
+            "- 将色条改为DASP同款色条样式<br><br>"
             "<b>v1.1 更新内容：</b><br>"
             "- 修复STFT重复预处理导致幅值错误的问题<br>"
             "- 添加加窗校正因子，确保加窗后幅值准确<br>"
             "- 添加主频搜索起始频率设置，排除低频噪声干扰<br>"
+            "- 添加色条最小值设置，可自定义色条范围<br>"
             "- 移除错误的单位转换（数据默认为加速度值，无需转换）<br>"
             "- 优化频域图纵坐标自适应逻辑")
         msg.setTextInteractionFlags(Qt.TextBrowserInteraction)
@@ -1027,7 +1179,7 @@ class MainWindow(QMainWindow):
             "<li><b>去直流分量</b>：去除信号的直流分量（默认开启）</li>"
             "<li><b>去趋势</b>：去除信号的线性趋势（默认关闭）</li>"
             "<li><b>重采样倍数</b>：降低采样率以加快处理速度（默认2倍）</li>"
-            "<li><b>加窗</b>：可在\"设置\"菜单中选择窗函数类型（默认无）</li>"
+            "<li><b>窗函数</b>：选择窗函数类型（无/汉宁窗/汉明窗/布莱克曼窗，默认汉宁窗）</li>"
             "</ul>"
             "<h4>4. 生成与保存图像：</h4>"
             "<ul>"
@@ -1038,8 +1190,8 @@ class MainWindow(QMainWindow):
             "<h4>5. 设置菜单：</h4>"
             "<ul>"
             "<li><b>清除文件夹选择</b>：清空已选择的文件夹和文件列表</li>"
-            "<li><b>修改瀑布图色条范围</b>：设置色条的最大值（默认自适应）</li>"
-            "<li><b>加窗</b>：选择窗函数类型（无/汉宁窗/汉明窗/布莱克曼窗）</li>"
+            "<li><b>修改瀑布图色条上限</b>：设置色条的最大值（默认自适应）</li>"
+            "<li><b>修改瀑布图色条最小值</b>：设置色条的最小值（默认自适应）</li>"
             "<li><b>主频搜索起始频率</b>：设置主频计算的最低频率阈值，排除低频噪声干扰（默认10Hz）。纵坐标自适应范围会参考该值之后的数据，避免低频噪声导致主频信号被压缩</li>"
             "</ul>"
             "<h3>【图像说明】</h3>"
@@ -1076,7 +1228,7 @@ class MainWindow(QMainWindow):
 if __name__ == "__main__":
     import sys
     import ctypes
-    app_id = "StupidMoonlight.VibrationAnalyzer.v1.0"
+    app_id = "StupidMoonlight.VibrationAnalyzer.v1.2"
     ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(app_id)
     app = QApplication(sys.argv)
     if getattr(sys, 'frozen', False):
