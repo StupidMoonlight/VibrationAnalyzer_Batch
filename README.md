@@ -1,48 +1,94 @@
-# VibrationAnalyzer / 振动加速度数据分析工具
+# 振动加速度数据分析工具
 
-## English
+## 项目结构
 
-A GUI-based tool for vibration acceleration data analysis with FFT spectrum analysis and waterfall plot visualization.
+```
+VibrationAnalyzer/
+├── __init__.py           # 包初始化文件，包含版本号和作者信息
+├── config.py             # 配置模块：色条颜色、默认参数等
+├── signal_processor.py   # 信号处理模块：STS文件读取、FFT分析、图像生成
+├── ui.py                 # UI模块：主窗口界面和交互逻辑
+├── main.py               # 主入口文件：程序启动
+├── icon.ico              # 程序图标
+├── VibrationAnalyzer_Batch.spec  # PyInstaller打包配置
+└── README.md             # 项目说明文档
+```
 
-### Features
-- **FFT Spectrum Analysis**: Convert time-domain vibration signals to frequency domain
-- **Waterfall Plot**: Visualize frequency changes over time with color-coded amplitude
-- **Bandpass Filtering**: Extract specific frequency components from vibration signals
-- **Batch Processing**: Process multiple STS files automatically
-- **Data Preprocessing**: DC removal, detrending, windowing, and resampling
-- **Customizable Parameters**: Time/frequency range, sampling rate, colorbar settings
+## 模块说明
 
-### Usage
-1. Select an STS file or folder containing multiple STS files
-2. Set analysis parameters (time range, frequency range, sampling rate, etc.)
-3. Click "Generate Image" to view the analysis result
-4. Click "Save All Images" to batch process all files
+### 1. config.py - 配置模块
+- 自定义色条颜色映射（从img.png提取的104个颜色点）
+- matplotlib字体配置
+- 默认参数配置（时间范围、频率范围、采样率等）
 
-### Requirements
-- Python 3.7+
-- PyQt5, numpy, scipy, matplotlib
+### 2. signal_processor.py - 信号处理模块
+- `read_sts(path)`: 读取STS二进制文件
+- `generate_plot(...)`: 生成FFT频谱分析图像
+  - 上方：指定时间窗口的平均频谱图
+  - 下方：瀑布图（频率-时间-幅值）
+  - 左侧：带通滤波后的时域信号图
 
+### 3. ui.py - UI模块
+- `MainWindow` 类：主窗口界面和交互逻辑
+  - 菜单栏设置
+  - 三列布局（参数设置、文件选择、图像显示）
+  - 文件选择和列表管理
+  - 图像生成和保存
+  - 设置对话框（色条范围、主频搜索频率等）
+  - 帮助对话框（关于、使用说明、免责声明）
 
----
+### 4. main.py - 主入口文件
+- 程序启动入口
+- PyInstaller打包路径配置
+- QApplication初始化和主窗口显示
 
-## 中文
+## 运行方式
 
-基于PyQt5的振动加速度数据分析工具，支持FFT频谱分析和瀑布图可视化。
+### 开发环境运行
+```bash
+cd VibrationAnalyzer
+python -m VibrationAnalyzer.main
+```
 
-### 功能特性
-- **FFT频谱分析**：将时域振动信号转换为频域信号
-- **瀑布图**：通过颜色编码展示频率随时间的变化
-- **带通滤波**：提取特定频率范围的振动信号
-- **批量处理**：自动处理多个STS文件
-- **数据预处理**：去直流分量、去趋势、加窗、重采样
-- **参数自定义**：时间/频率范围、采样频率、色条设置等
+### 打包
+```bash
+cd VibrationAnalyzer
+pyinstaller VibrationAnalyzer_Batch.spec
+```
 
-### 使用方法
-1. 选择单个STS文件或包含多个STS文件的文件夹
-2. 设置分析参数（时间范围、频率范围、采样频率等）
-3. 点击"生成图像"查看分析结果
-4. 点击"保存所有图像"批量处理所有文件
+或在上级目录：
+```bash
+pyinstaller VibrationAnalyzer_Batch.spec
+```
 
-### 依赖环境
-- Python 3.7+
-- PyQt5, numpy, scipy, matplotlib
+## 版本历史
+
+### v1.2.1
+- 修复设置菜单更新图像时缺少工具栏的问题
+- 代码重构：将单文件拆分为多个模块，提高可维护性
+- 新增时间范围自动调整功能：当输入的时间超出文件实际长度时，程序会自动调整为文件的最大时间
+- 修复频繁切换文件时可能导致的内存泄漏问题
+
+### v1.2
+- 将窗函数选择从设置菜单移至前处理设置界面，操作更直观
+- 窗函数默认值改为汉宁窗
+- 优化STFT分析：分析间隔改为0.2秒，提高时间分辨率
+- 增加色条刻度数量（15个），确保最大值和最小值都有刻度标注
+- 修复色条最小值自适应逻辑，默认真正自适应数据范围
+- 将色条改为DASP同款色条样式
+- 新增时间范围自动调整功能：当输入的时间超出文件实际长度时，程序会自动调整为文件的最大时间
+- 代码重构：将单文件拆分为多个模块，提高可维护性
+
+### v1.1
+- 修复STFT重复预处理导致幅值错误的问题
+- 添加加窗校正因子，确保加窗后幅值准确
+- 添加主频搜索起始频率设置，排除低频噪声干扰
+- 添加色条最小值设置，可自定义色条范围
+- 移除错误的单位转换（数据默认为加速度值，无需转换）
+- 优化频域图纵坐标自适应逻辑
+
+## 作者
+StupidMoonlight
+
+## GitHub
+https://github.com/StupidMoonlight
