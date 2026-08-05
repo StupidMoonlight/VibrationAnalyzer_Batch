@@ -11,7 +11,6 @@ VibrationAnalyzer/
 ├── main.py               # 主入口文件：程序启动
 ├── icon.ico              # 程序图标
 ├── VibrationAnalyzer_Batch.spec  # PyInstaller打包配置
-└── README.md             # 项目说明文档
 ```
 
 ## 模块说明
@@ -62,6 +61,14 @@ pyinstaller VibrationAnalyzer_Batch.spec
 ```
 
 ## 版本历史
+
+### v1.2.2
+- 新增TSP文件解析：自动读取同名TSP文件中的传感器名称和工程单位
+- 文件列表显示传感器名称（无对应TSP时仍显示源文件名）
+- 单文件选择改为累积模式，可逐个追加到文件列表
+- 修复点击"生成图像"时旧figure未释放导致的内存泄漏
+- 移除未使用的整体FFT计算，提升处理速度
+- 抽取公共方法，消除参数读取与图像刷新的重复代码
 
 ### v1.2.1
 - 修复设置菜单更新图像时缺少工具栏的问题
